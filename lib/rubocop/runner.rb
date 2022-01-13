@@ -46,6 +46,12 @@ module RuboCop
         warm_cache(target_files) if @options[:parallel]
         inspect_files(target_files)
       end
+      dd = Cop::Puknul.data.sort_by { |c, t| t }
+      total = dd.sum { |c, t| t }
+      dd.last(15).reverse.each do |cop, time|
+        puts "cop #{cop} took #{time}"
+      end
+      puts total: total
     rescue Interrupt
       self.aborting = true
       warn ''

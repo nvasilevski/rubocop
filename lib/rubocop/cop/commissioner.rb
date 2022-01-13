@@ -97,7 +97,10 @@ module RuboCop
       def trigger_responding_cops(callback, node)
         @callbacks[callback]&.each do |cop|
           with_cop_error_handling(cop, node) do
-            cop.public_send(callback, node)
+            started_at = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            res = cop.public_send(callback, node)
+            ::RuboCop::Cop::Puknul.write(cop.class.to_s, Process.clock_gettime(Process::CLOCK_MONOTONIC) - started_at)
+            res
           end
         end
       end
